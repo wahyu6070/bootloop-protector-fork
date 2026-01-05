@@ -1,7 +1,8 @@
 id=YetAnotherBootloopProtector
 name=Bootloop Protector Fork
-version=8 (16-c18afc5-release)
+version=8
 versionCode=16
 author=rhythmcache.t.me, wahyu6070
 description=This module try to detect and fix bootloops caused by Magisk modules.
-updateJson=https://raw.githubusercontent.com/Magisk-Modules-Alt-Repo/YetAnotherBootloopProtector/main/update.Json
+updateJson=https://raw.githubusercontent.com/wahyu6070/bootloop-protector-fork/refs/heads/main/update.Json
+
