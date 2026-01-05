@@ -57,6 +57,16 @@ su -c rm -f /data/adb/systemui.monitor.disable
 - Logs of this module will be found at `/data/local/tmp/service.log`
 - you can run `rm -f /data/local/tmp/service.log` to clear the logs.
 
+## Add File from recovery
+anda bisa menambahkan file kosong yang bernama ``bootloop-remove-module`` melalui recovery untuk menghapus semua module setelah booting.
+
+example
+```bash
+/cache/bootloop-remove-module
+/sdcard1/bootloop-remove-module
+/system/bootloop-remove-module
+/extcard/bootloop-remove-module
+```
 
 ### Limitations 
 
@@ -70,8 +80,3 @@ su -c rm -f /data/adb/systemui.monitor.disable
 ---
 
 
-
-[![Telegram](https://img.shields.io/badge/Telegram-Channel-blue?logo=telegram)](https://rhythmcache.t.me)
-
-
-[![Download](https://img.shields.io/github/downloads/Magisk-Modules-Alt-Repo/YetAnotherBootloopProtector/total?label=Total%20Downloads&color=blue)](https://github.com/Magisk-Modules-Alt-Repo/YetAnotherBootloopProtector/releases)
