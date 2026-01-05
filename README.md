@@ -58,7 +58,7 @@ su -c rm -f /data/adb/systemui.monitor.disable
 - you can run `rm -f /data/local/tmp/service.log` to clear the logs.
 
 ## Add File from recovery
-anda bisa menambahkan file kosong yang bernama ``bootloop-remove-module`` melalui recovery untuk menghapus semua module setelah booting.
+you can add an empty file named ``bootloop-remove-module`` via recovery to remove all modules after booting.
 
 example
 ```bash
