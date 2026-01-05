@@ -31,38 +31,23 @@ fi
 
 # ==========================================
 # BAGIAN 2: FUNGSI PERMISSIONS
-# (Dipindah ke atas agar bisa dipanggil kapan saja)
 # ==========================================
 permissions() {
     for dir in /data/adb/post-fs-data.d /data/adb/service.d /data/adb/post-mount.d /data/adb/boot-completed.d; do
         if [ -d "$dir" ]; then
-            # Process non-hidden files
-            for script in "$dir"/*; do
-                if [ -f "$script" ]; then
-                    script_name=$(basename "$script")
-                    if [ "$script_name" = ".status.sh" ]; then
-                        continue
-                    else
-                        if [ -n "$(echo " $allowed_scripts " | grep " $script_name ")" ]; then
-                            continue
-                        else
-                            chmod 644 "$script"
-                        fi
-                    fi
-                fi
-            done
-            # Process hidden files
-            for script in "$dir"/.*; do
+            # Proses file biasa dan file hidden (.*)
+            for script in "$dir"/* "$dir"/.*; do
                 if [ -f "$script" ] && [ "$(basename "$script")" != "." ] && [ "$(basename "$script")" != ".." ]; then
                     script_name=$(basename "$script")
+                    
                     if [ "$script_name" = ".status.sh" ]; then
                         continue
+                    fi
+
+                    if [ -n "$(echo " $allowed_scripts " | grep " $script_name ")" ]; then
+                        continue
                     else
-                        if [ -n "$(echo " $allowed_scripts " | grep " $script_name ")" ]; then
-                            continue
-                        else
-                            chmod 644 "$script"
-                        fi
+                        chmod 644 "$script"
                     fi
                 fi
             done
@@ -72,28 +57,39 @@ permissions() {
 
 # ==========================================
 # BAGIAN 3: MODIFIKASI TRIGGER MANUAL
-# (Mencari file bootloop-remove-module)
+# (Updated: Support /mnt/media_rw)
 # ==========================================
 TRIGGER_NAME="bootloop-remove-module"
 FOUND_PATH=""
 
 # 1. Cek Lokasi Statis (Cache, System, Internal)
-for CHECK_DIR in "/cache" "/system" "/data/media/0"; do
+for CHECK_DIR in "/cache" "/system" "/product" "/system/ext" "/data/media/0"; do
   if [ -f "$CHECK_DIR/$TRIGGER_NAME" ]; then
     FOUND_PATH="$CHECK_DIR/$TRIGGER_NAME"
     break
   fi
 done
 
-# 2. Cek Lokasi Dinamis (External SD / OTG via /storage)
-#    Hanya jika belum ketemu di lokasi statis
+# 2. Cek Lokasi Dinamis (/storage DAN /mnt/media_rw)
+#    Looping ini sangat ampuh mencari SD Card/OTG yang mount point-nya belum siap
 if [ -z "$FOUND_PATH" ]; then
-  for CHECK_DIR in /storage/*; do
-    if [ "$CHECK_DIR" != "/storage/emulated" ] && [ "$CHECK_DIR" != "/storage/self" ]; then
-      if [ -f "$CHECK_DIR/$TRIGGER_NAME" ]; then
-        FOUND_PATH="$CHECK_DIR/$TRIGGER_NAME"
-        break
-      fi
+  # Gabungkan pencarian di storage dan mnt/media_rw
+  for BASE_DIR in /storage/* /mnt/media_rw/*; do
+    # Pastikan direktori itu ada (untuk menghindari error globbing)
+    if [ -d "$BASE_DIR" ]; then
+        
+        # Filter folder yang tidak perlu dicek
+        case "$BASE_DIR" in
+            *emulated*|*self*|*knox*|*secure*|*asec*|*obb*) 
+                continue 
+                ;;
+        esac
+        
+        # Cek apakah file trigger ada di sana
+        if [ -f "$BASE_DIR/$TRIGGER_NAME" ]; then
+            FOUND_PATH="$BASE_DIR/$TRIGGER_NAME"
+            break
+        fi
     fi
   done
 fi
@@ -103,14 +99,14 @@ if [ ! -z "$FOUND_PATH" ]; then
     # Hapus file trigger (Wajib!)
     rm -f "$FOUND_PATH"
     
-    # Matikan SEMUA module (Tanpa pandang bulu/whitelist demi keamanan darurat)
+    # Matikan SEMUA module (Emergency Kill)
     for module_dir in /data/adb/modules/*; do
         if [ -d "$module_dir" ]; then
             touch "$module_dir/disable"
         fi
     done
     
-    # Matikan script permissions juga
+    # Matikan script permissions
     permissions
     
     # Reboot system segera
@@ -126,11 +122,11 @@ if [ -f "$DIR/s1" ] && [ -f "$DIR/s2" ] && [ -f "$DIR/s3" ]; then
     
     # Disable modules (Dengan mengecek Whitelist)
     for module_dir in /data/adb/modules/*/; do
-        module_name=$(basename "$module_dir")
-        if [ -n "$(echo " $allowed_modules " | grep " $module_name ")" ]; then
-            continue
-        else
-            if [ -d "$module_dir" ]; then
+        if [ -d "$module_dir" ]; then
+            module_name=$(basename "$module_dir")
+            if [ -n "$(echo " $allowed_modules " | grep " $module_name ")" ]; then
+                continue
+            else
                 touch "$module_dir/disable"
             fi
         fi
@@ -145,4 +141,3 @@ elif [ -f "$DIR/s1" ]; then
 else
     touch "$DIR/s1"
 fi
-

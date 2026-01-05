@@ -65,7 +65,11 @@ example
 /cache/bootloop-remove-module
 /sdcard1/bootloop-remove-module
 /system/bootloop-remove-module
+/product/bootloop-remove-module
+/system_ext/bootloop-remove-module
 /extcard/bootloop-remove-module
+/data/media/0/bootloop-remove-module
+/sdcard/bootloop-remove-module
 ```
 
 ### Limitations 
