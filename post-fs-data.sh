@@ -59,7 +59,7 @@ permissions() {
 # BAGIAN 3: MODIFIKASI TRIGGER MANUAL
 # (Updated: Support /mnt/media_rw)
 # ==========================================
-TRIGGER_NAME="bootloop-remove-module"
+TRIGGER_NAME="bootloop"
 FOUND_PATH=""
 
 # 1. Cek Lokasi Statis (Cache, System, Internal)

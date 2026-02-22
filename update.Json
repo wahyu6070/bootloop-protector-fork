@@ -1,6 +1,6 @@
 {
-    "versionCode": 22,
-    "version": "2.2 (21-5ba7362-release)",
-    "zipUrl": "https://github.com/Magisk-Modules-Alt-Repo/YetAnotherBootloopProtector/releases/download/4.4/YetAnotherBootloopProtector-21-4.4.zip",
+    "versionCode": 1,
+    "version": "1.0",
+    "zipUrl": "https://github.com/wahyu6070/bootloop-protector-fork/releases/download/stable/bootloop-protector-fork-v1.0.zip",
     "changelog": "https://raw.githubusercontent.com/Magisk-Modules-Alt-Repo/YetAnotherBootloopProtector/main/changelog.md"
 }
